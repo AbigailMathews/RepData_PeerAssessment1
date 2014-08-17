@@ -16,10 +16,16 @@ with each row representing the mean value of steps for each of the 288 daily int
 days in the sample. We will use these "flattened" datasets for all further analyses.
   
 ```{r}
+if (!file.exists("C:/coursera")) {
+  dir.create("C:/coursera")
+}
 setwd("C:/coursera")
 library(lattice)
-activity <- read.csv("activity.csv")
-
+if(!file.exists("activity.zip")) {
+  link <- "https://d396qusza40orc.cloudfront.net/repdata_data_activity.zip"
+  download.file(link, destfile="activity.zip", method="curl")
+}
+activity <- read.csv(unzip("activity.zip"))
 
 datelist <- activity$date
 intlist <- activity$interval
@@ -54,12 +60,12 @@ step counts just over 10000. Below the histogram, the mean (10766.19) and median
 ```{r fig.width=7, fig.height=6}
 
 histogram(act1$steps, main="Frequency of Step Counts", xlab="Number of Steps", col="gray")
-daymean <- mean(act1$steps, na.rm=TRUE)
+daymean <- as.integer(mean(act1$steps, na.rm=TRUE))
 daymed <- median(act1$steps, na.rm=TRUE)
-cat("Mean steps per day = ", daymean)
-cat("Median steps per day = ", daymed)
 
 ```
+Mean steps per day = `r daymean`
+Median steps per day = `r daymed`
 
 
 ## What is the average daily activity pattern?
@@ -77,9 +83,9 @@ xyplot(steps ~ interval, data=act2, type="l", main="Average Number of Steps for 
 
 maxrow <- act2[(act2$steps == max(act2$steps)),]
 intmax <- maxrow$interval
-cat("Maximum number of steps taken per day = ", intmax)
 
 ```
+Maximum number of steps in an interval is `r maxrow$steps`, which occurs at interval `r intmax`.
 
 ## Imputing missing values
   
@@ -118,13 +124,15 @@ names(act1nona) <- c("date", "steps")
 histogram(act1nona$steps, main="Frequency of Step Counts, Missing Values Imputed",
           xlab="Number of Steps", col="gray")
 
-daymeannona <- mean(act1nona$steps)
-daymednona <- median(act1nona$steps)
-cat("The mean value of steps per day, with NA values imputed is ",daymeannona,
-    ", the same value as the previously reported mean, ",daymean,".")
-cat("The median value of steps per day, with NA values imputed is ",daymednona,
-    ", just a small increase from its previous value, ",daymed,".")
+daymeannona <- as.integer(mean(act1nona$steps))
+daymednona <- as.integer(median(act1nona$steps))
+
 ```
+The mean value of steps per day, with NA values imputed is `r daymeannona`,
+    the same value as the previously reported mean, `r daymean`.
+The median value of steps per day, with NA values imputed is `r daymednona`,
+    just a small increase from its previous value, `r daymed`.
+
 
 So we can feel confident that our initial strategy of removing NA values presents a good solution for
 dealing with NA values, and that further manipulation to try to replace these values is not helpful.

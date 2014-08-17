@@ -22,13 +22,6 @@ if (!file.exists("C:/coursera")) {
 }
 setwd("C:/coursera")
 library(lattice)
-```
-
-```
-## Warning: package 'lattice' was built under R version 3.1.1
-```
-
-```r
 if(!file.exists("activity.zip")) {
   link <- "https://d396qusza40orc.cloudfront.net/repdata_data_activity.zip"
   download.file(link, destfile="activity.zip", method="curl")
@@ -94,22 +87,11 @@ histogram(act1$steps, main="Frequency of Step Counts", xlab="Number of Steps", c
 ![plot of chunk unnamed-chunk-4](figure/unnamed-chunk-4.png) 
 
 ```r
-daymean <- mean(act1$steps, na.rm=TRUE)
+daymean <- as.integer(mean(act1$steps, na.rm=TRUE))
 daymed <- median(act1$steps, na.rm=TRUE)
-cat("Mean steps per day = ", daymean)
 ```
-
-```
-## Mean steps per day =  10766
-```
-
-```r
-cat("Median steps per day = ", daymed)
-```
-
-```
-## Median steps per day =  10765
-```
+Mean steps per day = 10766
+Median steps per day = 10765
 
 
 ## What is the average daily activity pattern?
@@ -131,12 +113,8 @@ xyplot(steps ~ interval, data=act2, type="l", main="Average Number of Steps for 
 ```r
 maxrow <- act2[(act2$steps == max(act2$steps)),]
 intmax <- maxrow$interval
-cat("Maximum number of steps taken per day = ", intmax)
 ```
-
-```
-## Maximum number of steps taken per day =  835
-```
+Maximum number of steps in an interval is 206.1698, which occurs at interval 835.
 
 ## Imputing missing values
   
@@ -190,24 +168,14 @@ histogram(act1nona$steps, main="Frequency of Step Counts, Missing Values Imputed
 ![plot of chunk unnamed-chunk-7](figure/unnamed-chunk-7.png) 
 
 ```r
-daymeannona <- mean(act1nona$steps)
-daymednona <- median(act1nona$steps)
-cat("The mean value of steps per day, with NA values imputed is ",daymeannona,
-    ", the same value as the previously reported mean, ",daymean,".")
+daymeannona <- as.integer(mean(act1nona$steps))
+daymednona <- as.integer(median(act1nona$steps))
 ```
+The mean value of steps per day, with NA values imputed is 10766,
+    the same value as the previously reported mean, 10766.
+The median value of steps per day, with NA values imputed is 10766,
+    just a small increase from its previous value, 10765.
 
-```
-## The mean value of steps per day, with NA values imputed is  10766 , the same value as the previously reported mean,  10766 .
-```
-
-```r
-cat("The median value of steps per day, with NA values imputed is ",daymednona,
-    ", just a small increase from its previous value, ",daymed,".")
-```
-
-```
-## The median value of steps per day, with NA values imputed is  10766 , just a small increase from its previous value,  10765 .
-```
 
 So we can feel confident that our initial strategy of removing NA values presents a good solution for
 dealing with NA values, and that further manipulation to try to replace these values is not helpful.
